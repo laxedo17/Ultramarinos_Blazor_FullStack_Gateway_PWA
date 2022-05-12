@@ -1,3 +1,5 @@
+using Blazored.LocalStorage;
+
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -16,6 +18,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7289/") });
 builder.Services.AddScoped<IProductoServicio, ProductoServicio>();
 builder.Services.AddScoped<ICestaCompraServicio, CestaCompraServicio>();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<IXestionarProductosLocalStorageServicio, XestionarProductosLocalStorageServicio>();
+builder.Services.AddScoped<IXestionarCestaItemsLocalStorageServicio, XestionarCestaItemsLocalStorageServicio>();
 
 
 await builder.Build().RunAsync();

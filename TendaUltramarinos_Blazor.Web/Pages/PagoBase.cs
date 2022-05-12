@@ -23,8 +23,8 @@ namespace TendaUltramarinos_Blazor.Web.Pages
         [Inject]
         public ICestaCompraServicio CestaCompraServicio { get; set; }
 
-        //[Inject]
-        //public IManageCartItemsLocalStorageService ManageCartItemsLocalStorageService { get; set; }
+        [Inject]
+        public IXestionarCestaItemsLocalStorageServicio XestionarCestaItemsLocalStorageServicio { get; set; }
 
 
         protected string MostrarBotons { get; set; } = "block";
@@ -33,12 +33,11 @@ namespace TendaUltramarinos_Blazor.Web.Pages
         {
             try
             {
-                /* CestaCompraItems = await ManageCartItemsLocalStorageService.GetCollection()*/
-                ;
+                CestaCompraItems = await XestionarCestaItemsLocalStorageServicio.GetColeccion();
 
                 if (CestaCompraItems != null && CestaCompraItems.Count() > 0)
                 {
-                    //valor Guid para identificar un pedido univocamente
+                    //valor Guid para identificar un pedido inequivocamente
                     Guid pedidoGuid = Guid.NewGuid();
 
                     PagoCantidade = CestaCompraItems.Sum(p => p.PrecioTotal);
@@ -66,6 +65,7 @@ namespace TendaUltramarinos_Blazor.Web.Pages
                 if (firstRender)
                 {
                     await Javatoscript.InvokeVoidAsync("initPayPalButton");
+                    //chama a funcion de Paypal no arquivo Index.html da carpeta wwwroot
                 }
             }
             catch (Exception)

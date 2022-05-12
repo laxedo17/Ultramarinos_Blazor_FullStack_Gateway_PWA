@@ -17,19 +17,40 @@ namespace TendaUltramarinos_Blazor.Web.Pages
 
         public IEnumerable<ProductoDto> Productos { get; set; }
 
-        /// <summary>
-        /// O metodo OnInitializedAsync asociase
-        /// cun evento life cycle -ciclo de vida-
-        /// </summary>
-        /// <returns></returns>
+
+        [Inject]
+        public IXestionarProductosLocalStorageServicio XestionarProductosLocalStorageServicio { get; set; }
+
+        [Inject]
+        public IXestionarCestaItemsLocalStorageServicio XestionarCestaItemsLocalStorageServicio { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
+        public string ErrorMensaxe { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
-            Productos = await ProductoServicio.GetItems();
+            try
+            {
+                await ClearLocalStorage();
 
-            var cestaCompraElementos = await CestaCompraServicio.GetItems(Hardcodeada.UsuarioId);
-            var totalCantidade = cestaCompraElementos.Sum(i => i.Cantidade);
+                //evita facer peticions innecesarios ao lado servidor
+                Productos = await XestionarProductosLocalStorageServicio.GetColeccion();
 
-            CestaCompraServicio.RaiseEventOnCestaCompraChanged(totalCantidade);
+                var cestaCompraItems = await XestionarCestaItemsLocalStorageServicio.GetColeccion();
+
+                var totalCantidade = cestaCompraItems.Sum(i => i.Cantidade);
+
+                CestaCompraServicio.RaiseEventOnCestaCompraChanged(totalCantidade);
+
+            }
+            catch (Exception ex)
+            {
+                ErrorMensaxe = ex.Message;
+
+            }
+
         }
 
         protected IOrderedEnumerable<IGrouping<int, ProductoDto>> GetProductosAgrupadosPorCategoria()
@@ -39,10 +60,16 @@ namespace TendaUltramarinos_Blazor.Web.Pages
                    orderby prodPorCatGrupo.Key
                    select prodPorCatGrupo;
         }
-
         protected string GetCategoriaNome(IGrouping<int, ProductoDto> agrupadosProductoDtos)
         {
             return agrupadosProductoDtos.FirstOrDefault(pg => pg.CategoriaId == agrupadosProductoDtos.Key).CategoriaNome;
         }
+
+        private async Task ClearLocalStorage()
+        {
+            await XestionarProductosLocalStorageServicio.RemoveColeccion();
+            await XestionarCestaItemsLocalStorageServicio.RemoveColeccion();
+        }
     }
-}
+    }
+

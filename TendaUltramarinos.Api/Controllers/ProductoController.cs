@@ -33,7 +33,7 @@ namespace TendaUltramarinos.Api.Controllers
             try
             {
                 var productos = await this.productoRepositorio.GetItems();
-                var productoCategorias = await this.productoRepositorio.GetCategorias();
+                //var productoCategorias = await this.productoRepositorio.GetCategorias();
                 //despois unimos os productos a cada categoria de producto,
                 //esta forma de arriba e ineficiente
                 //para facer un Join
@@ -42,7 +42,7 @@ namespace TendaUltramarinos.Api.Controllers
                 //var productos = await db.Productos
                 //    .Include(p => p.ProductoCategoria).ToListAsync();
 
-                if (productos == null || productoCategorias == null)
+                if (productos == null)
                 {
                     return NotFound();
                 }
@@ -59,7 +59,7 @@ namespace TendaUltramarinos.Api.Controllers
                     //unha coleccion de tipo ProductoDto ao noso
                     //action method
                     //o extension method creamolo na carpeta Extensions
-                    var productoDtos = productos.ConvertirADto(productoCategorias);
+                    var productoDtos = productos.ConvertirADto();
                     return Ok(productoDtos);//devolve codigo http 200
                 }
 
@@ -86,8 +86,8 @@ namespace TendaUltramarinos.Api.Controllers
                 }
                 else
                 {
-                    var productoCategoria = await this.productoRepositorio.GetCategoria(producto.CategoriaId);
-                    var productoDto = producto.ConvertirADto(productoCategoria);
+                    //var productoCategoria = await this.productoRepositorio.GetCategoria(producto.CategoriaId);
+                    var productoDto = producto.ConvertirADto();
 
                     return Ok(productoDto);
                 }
@@ -119,14 +119,14 @@ namespace TendaUltramarinos.Api.Controllers
 
         [HttpGet]
         [Route("{categoriaId}/GetItemsPorCategoria")]
-        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetItemsByCategory(int categoriaId)
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> GetItemsPorCategoria(int categoriaId)
         {
             try
             {
                 var productos = await productoRepositorio.GetItemsPorCategoria(categoriaId);
-                var productoCategorias = await productoRepositorio.GetCategorias();
+                //var productoCategorias = await productoRepositorio.GetCategorias();
 
-                var productoDtos = productos.ConvertirADto(productoCategorias);
+                var productoDtos = productos.ConvertirADto();
 
                 return Ok(productoDtos);
 

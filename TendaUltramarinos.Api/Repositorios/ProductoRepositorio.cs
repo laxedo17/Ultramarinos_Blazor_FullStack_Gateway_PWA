@@ -38,7 +38,9 @@ namespace TendaUltramarinos.Api.Repositorios
 
         public async Task<Producto> GetItem(int id)
         {
-            var producto = await db.Productos.FindAsync(id);
+            var producto = await db.Productos
+                .Include(p => p.ProductoCategoria)
+                .SingleOrDefaultAsync(p => p.Id == id);
             return producto;
         }
 
@@ -49,7 +51,9 @@ namespace TendaUltramarinos.Api.Repositorios
         /// <returns>Todos os productos da taboa Productos.</returns>
         public async Task<IEnumerable<Producto>> GetItems()
         {
-            var productos = await this.db.Productos.ToListAsync();
+            var productos = await this.db.Productos
+                .Include(p => p.ProductoCategoria)
+                .ToListAsync();
             return productos;
         }
 

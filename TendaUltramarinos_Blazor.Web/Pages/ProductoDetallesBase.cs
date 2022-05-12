@@ -19,11 +19,21 @@ namespace TendaUltramarinos_Blazor.Web.Pages
         public ProductoDto Producto { get; set; }
         public string ErrorMensaxe { get; set; } //para excepcions
 
+        [Inject]
+        public IXestionarProductosLocalStorageServicio XestionarProductosLocalStorageServicio { get; set; }
+
+        [Inject]
+        public IXestionarCestaItemsLocalStorageServicio XestionarCestaItemsLocalStorageServicio { get; set; }
+
+        private List<CestaItemDto> CestaCompraItems { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             try
             {
-                Producto = await ProductoServicio.GetItem(Id);
+                CestaCompraItems = await XestionarCestaItemsLocalStorageServicio.GetColeccion();
+                //Producto = await ProductoServicio.GetItem(Id);
+                Producto = await GetProductoPorId(Id);
             }
             catch (Exception ex)
             {
@@ -31,11 +41,28 @@ namespace TendaUltramarinos_Blazor.Web.Pages
             }
         }
 
+        private async Task<ProductoDto> GetProductoPorId(int id)
+        {
+            var productoDtos = await XestionarProductosLocalStorageServicio.GetColeccion();
+
+            if (productoDtos != null)
+            {
+                return productoDtos.SingleOrDefault(p => p.Id == id);
+            }
+            return null;
+        }
+
         protected async Task AddToCesta_Click(CestaItemAnadirDto cestaItemAnadirDto)
         {
             try
             {
                 var cestaItemDto = await CestaCompraServicio.AddElemento(cestaItemAnadirDto);
+
+                if (cestaItemDto != null)
+                {
+                    CestaCompraItems.Add(cestaItemDto);
+                    await XestionarCestaItemsLocalStorageServicio.SaveColeccion(CestaCompraItems);
+                }
 
                 NavigationManager.NavigateTo("/CestaCompra");
             }

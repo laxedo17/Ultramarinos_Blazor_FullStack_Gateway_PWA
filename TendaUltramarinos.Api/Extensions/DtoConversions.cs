@@ -29,11 +29,9 @@ namespace TendaUltramarinos.Api.Extensions
                         IconoCss = productoCategoria.IconoCss
                     }).ToList();
         }
-        public static IEnumerable<ProductoDto> ConvertirADto(this IEnumerable<Producto> productos, IEnumerable<ProductoCategoria> productoCategorias)
+        public static IEnumerable<ProductoDto> ConvertirADto(this IEnumerable<Producto> productos)
         {
             return (from producto in productos
-                    join productoCategoria in productoCategorias
-                    on producto.CategoriaId equals productoCategoria.Id
                     select new ProductoDto
                     {
                         Id = producto.Id,
@@ -42,8 +40,8 @@ namespace TendaUltramarinos.Api.Extensions
                         ImaxeUrl = producto.ImaxeUrl,
                         Precio = producto.Precio,
                         Cantidade = producto.Cantidade,
-                        CategoriaId = producto.CategoriaId,
-                        CategoriaNome = productoCategoria.Nome
+                        CategoriaId = producto.ProductoCategoria.Id,
+                        CategoriaNome = producto.ProductoCategoria.Nome
                     }).ToList();
         }
 
@@ -53,7 +51,7 @@ namespace TendaUltramarinos.Api.Extensions
         /// <param name="productos"></param>
         /// <param name="productoCategorias"></param>
         /// <returns></returns>
-        public static ProductoDto ConvertirADto(this Producto producto, ProductoCategoria productoCategoria)
+        public static ProductoDto ConvertirADto(this Producto producto)
         {
             return new ProductoDto
             {
@@ -63,8 +61,8 @@ namespace TendaUltramarinos.Api.Extensions
                 ImaxeUrl = producto.ImaxeUrl,
                 Precio = producto.Precio,
                 Cantidade = producto.Cantidade,
-                CategoriaId = producto.CategoriaId,
-                CategoriaNome = productoCategoria.Nome
+                CategoriaId = producto.ProductoCategoria.Id,
+                CategoriaNome = producto.ProductoCategoria.Nome
             };
         }
 

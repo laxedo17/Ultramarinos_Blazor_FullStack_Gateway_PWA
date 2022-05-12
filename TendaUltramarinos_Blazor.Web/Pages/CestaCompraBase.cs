@@ -18,6 +18,9 @@ namespace TendaUltramarinos_Blazor.Web.Pages
 
         //Mostra a lista de elementos da cesta da compra para mostrar os datos relevantes en pantalla. Pasamola a List para ter unha maneira facil de borrar os elementos da cesta
         public List<CestaItemDto> CestaCompraItems { get; set; }
+
+        [Inject]
+        public IXestionarCestaItemsLocalStorageServicio XestionarCestaItemsLocalStorageServicio { get; set; }
         public string ErrorMensaxe { get; set; }
 
         protected string PrecioTotal { get; set; }
@@ -31,7 +34,8 @@ namespace TendaUltramarinos_Blazor.Web.Pages
         {
             try
             {
-                CestaCompraItems = await CestaCompraServicio.GetItems(Hardcodeada.UsuarioId);
+                //CestaCompraItems = await CestaCompraServicio.GetItems(Hardcodeada.UsuarioId);
+                CestaCompraItems = await XestionarCestaItemsLocalStorageServicio.GetColeccion();
                 CestaChanged();
 
             }
@@ -59,10 +63,11 @@ namespace TendaUltramarinos_Blazor.Web.Pages
         /// Metodo para eliminar un elemento da cesta solamente no lado cliente para evitar viaxar ao servidor e asi aforrar o tempo significativamente
         /// </summary>
         /// <param name="id"></param>
-        private void RemoveCestaItem(int id)
+        private async void RemoveCestaItem(int id)
         {
             var cestaItemDto = GetCestaItem(id); //devolvemos o obxecto que desexamos borrar
             CestaCompraItems.Remove(cestaItemDto);
+            await XestionarCestaItemsLocalStorageServicio.SaveColeccion(CestaCompraItems);
         }
 
         protected async Task UpdateCtdCestaItem_Click(int id, int cantidade)
@@ -112,7 +117,7 @@ namespace TendaUltramarinos_Blazor.Web.Pages
             TotalCantidade = this.CestaCompraItems.Sum(p => p.Cantidade);
         }
 
-        private void UpdateItemPrecioTotal(CestaItemDto cestaItemDto)
+        private async void UpdateItemPrecioTotal(CestaItemDto cestaItemDto)
         {
             var elemento = GetCestaItem(cestaItemDto.Id);
 
@@ -120,6 +125,8 @@ namespace TendaUltramarinos_Blazor.Web.Pages
             {
                 elemento.PrecioTotal = cestaItemDto.Precio * cestaItemDto.Cantidade;
             }
+
+            await XestionarCestaItemsLocalStorageServicio.SaveColeccion(CestaCompraItems);
         }
 
         private void CalculaCestaResumenTotales()
