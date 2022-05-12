@@ -1,0 +1,64 @@
+﻿@page "/CestaCompra"
+@inherits CestaCompraBase
+
+@if (CestaCompraItems == null && ErrorMensaxe == null)
+{
+    <MostrarSpinner></MostrarSpinner>
+}
+else if (ErrorMensaxe != null)
+{
+    <MostrarError ErrorMensaxe="@ErrorMensaxe"></MostrarError>
+}
+else
+{
+    <h3 class="mb-5">Cesta da Compra</h3>
+    @if (CestaCompraItems.Count() > 0)
+    {
+        <div class="row mb-5">
+            <div class="col-md-9">
+                @foreach (var item in CestaCompraItems)
+                {
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="@item.ProductoImaxeUrl" width="300" class="img-thumbnail">
+                        </div>
+                        <div class="col-md-8">
+                            <h5>@item.ProductoNome</h5>
+                            <div class="mb-4">@item.ProductoDescripcion</div>
+                            <span>
+                                Precio: <b>@item.Precio.ToString("C")</b>
+                                <input @oninput="()=>UpdateCantidade_Entrada(item.Id)"
+                           type="number" @bind="@item.Cantidade" />
+                                <button datos-itemId="@item.Id" class="btn btn-info btn-sm update-cantidade"
+                            @onclick="(() => UpdateCtdCestaItem_Click(item.Id, item.Cantidade))">
+                                    Actualizar cantidade
+                                </button>
+                            </span>
+                            <div>
+                                <button @onclick="(() => DeleteCestaItem_Click(item.Id))"
+                            class="btn btn-danger sm">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            </div>
+            <div class="col-md-3">
+                <h5>Resumen da cesta</h5>
+                <div class="mt-2">
+                    <div>Total - (@TotalCantidade productos)&nbsp;<b>@PrecioTotal</b></div>
+                    <a href="Pago" class="btn btn-success">
+                        <span class="oi oi-credit-card"></span>&nbsp; Pagar
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h4>Neste momento non hai productos na tua Cesta da Compra</h4>
+    }
+
+}

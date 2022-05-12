@@ -1,0 +1,23 @@
+﻿@inherits ProductoCategoriasNavMenuBase
+
+@if (ProductoCategoriaDtos == null && ErrorMensaxe == null)
+{
+            <MostrarSpinner />
+}
+else if (ErrorMensaxe != null)
+{
+            <MostrarError ErrorMessage="@ErrorMensaxe" />
+}
+else
+{
+    @foreach (var productoCategoria in ProductoCategoriaDtos)
+    {
+        var enlace = "/ProductosPorCategoria/" + productoCategoria.Id;
+
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="@enlace">
+                                <span class="@productoCategoria.IconoCss"></span>&nbsp;@productoCategoria.Nome
+                            </NavLink>
+                        </div>
+    }
+}

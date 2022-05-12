@@ -1,0 +1,22 @@
+﻿@page "/ProductosPorCategoria/{CategoriaId:int}"
+@inherits ProductosPorCategoriaBase
+
+@if(Productos == null && ErrorMensaxe == null)
+{
+    <MostrarSpinner/>
+}
+else if(ErrorMensaxe != null)
+{
+    <MostrarError ErrorMensaxe = "@ErrorMensaxe" />
+}
+else
+{
+    <h3>Productos (@CategoriaNome)</h3>
+   
+    @if(Productos.Count() > 0)
+    {
+        <div class = "row mt-3">
+          <MostrarProductos Productos = "@Productos"></MostrarProductos>
+        </div>
+    }
+

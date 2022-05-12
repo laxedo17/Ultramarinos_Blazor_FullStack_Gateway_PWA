@@ -1,0 +1,66 @@
+﻿@page "/Pago"
+@inherits PagoBase
+
+<h3 class="mb-5">Pagamento</h3>
+<div class="row">
+    <div class="col-md-6" style="display:@MostrarBotons">
+        <h4 class="mb-2">Metodo Pago</h4>
+        <div id="smart-button-container">
+            <input type="hidden" name="descriptionInput" id="description" @bind="PagoDescripcion" />
+            <input name="amountInput" type="hidden" id="amount" @bind="PagoCantidade">
+            <div style="text-align: center; margin-top: 0.625rem;" id="paypal-button-container"></div>
+        </div>
+    </div>
+
+    @if (CestaCompraItems == null)
+    {
+        <MostrarSpinner />
+    }
+    else
+    {
+        <div class="col-md-6">
+            <h4 class="mb-2">Resumen do Pagamento</h4>
+            @if (CestaCompraItems.Count() > 0)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in CestaCompraItems)
+                        {
+                            <tr>
+                                <td>@item.Cantidade x @item.ProductoNome</td>
+                                <td>@item.PrecioTotal.ToString("C")</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><b>Total</b></td>
+                            <td><b>@PagoCantidade.ToString("C")</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>Agora mesmo non tes ningun producto na tua cesta da compra</p>
+            }
+        </div>
+    }
+</div>
+
+@*
+    Paypal por defecto, moitos campos eliminados para resumir
+    <div id="smart-button-container">
+    <div style="text-align: center"><label for="description"> </label><input type="text" name="descriptionInput" id="description" maxlength="127" value=""></div>
+    <p id="descriptionError" style="visibility: hidden; color:red; text-align: center;">Por favor indica unha descripcion</p>
+    <div style="text-align: center"><label for="amount"> </label><input name="amountInput" type="number" id="amount" value=""><span> EUR</span></div>
+    <p id="priceLabelError" style="visibility: hidden; color:red; text-align: center;">Por favor indica un precio</p>
+    <div id="invoiceidDiv" style="text-align: center; display: none;"><label for="invoiceid"> </label><input name="invoiceid" maxlength="127" type="text" id="invoiceid" value=""></div>
+    <p id="invoiceidError" style="visibility: hidden; color:red; text-align: center;">Por favor indica unha ID de factura</p>
+    <div style="text-align: center; margin-top: 0.625rem;" id="paypal-button-container"></div>
+    </div>*@
+

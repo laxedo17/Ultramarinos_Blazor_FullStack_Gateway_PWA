@@ -1,0 +1,28 @@
+﻿@implements IDisposable
+@inject ICestaCompraServicio CestaCompraServicio
+
+<a href="CestaCompra" class="btn btn-info">
+    <i class="oi oi-cart"></i>&nbsp;Cesta
+    <span class="badge bg-dark">@cestaCompraContaItems</span>
+</a>
+
+@code {
+    private int cestaCompraContaItems = 0;
+
+    protected override void OnInitialized()
+    {
+        CestaCompraServicio.OnCestaCompraChanged += CestaCompraChanged;
+    }
+
+    protected void CestaCompraChanged(int totalCantidade)
+    {
+        cestaCompraContaItems = totalCantidade;
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        //para evitar memory leaks
+        CestaCompraServicio.OnCestaCompraChanged -= CestaCompraChanged;
+    }
+}
